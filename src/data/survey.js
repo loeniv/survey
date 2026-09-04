@@ -15,6 +15,12 @@
 //   "scale"          - a row of numbered buttons (e.g. 1..5)
 //   "slider"         - a single slider
 //   "text"           - free-text answer
+//
+// Any "dropdown" / "single-choice" question can set `allowOther: true`. That
+// adds an "Other" choice; picking it reveals a text box and the typed text is
+// stored as the answer.
+// Every question may have a `help` string — a short, friendly explanation
+// shown under the question title.
 // ============================================================================
 
 export const surveyConfig = {
@@ -23,15 +29,15 @@ export const surveyConfig = {
   // Shown on the welcome screen and again above the consent checkboxes.
   // "{count}" is replaced automatically with the number of scenario videos.
   intro:
-    "Thank you for taking part in this study. You will watch {count} short " +
-    "video clips showing a humanoid robot (Unitree G1) walking or interacting " +
-    "in a shared space. After each clip, you will answer a few short questions about " +
-    "how the interaction made you feel. There are no right or wrong answers. " +
-    "Please respond based on your spontaneous impression, imagining yourself as " +
-    "a person present in the scene.\n\n" +
-    "The survey takes about 15–20 minutes. Your responses are anonymous and " +
-    "used solely for academic research (master's thesis). You may withdraw at " +
-    "any time without giving a reason.",
+    "Thanks so much for taking part — it really helps. You'll watch {count} " +
+    "short video clips of a humanoid robot (Unitree G1) moving around and " +
+    "interacting in a shared space. After each clip there are a few quick " +
+    "questions about how it made you feel. There are no right or wrong " +
+    "answers: just picture yourself as someone in the scene and go with your " +
+    "first impression.\n\n" +
+    "It takes about 15–20 minutes. Your answers are anonymous and used only " +
+    "for academic research (a master's thesis). You can stop at any time, no " +
+    "reason needed.",
 
   // Short line shown inside the bordered box on the welcome screen.
   consent:
@@ -41,6 +47,13 @@ export const surveyConfig = {
   // Shown on the very last screen.
   endText:
     "Hope you have a great day!\n\nThank you again and kind regards,\nLeonie",
+
+  // Final-step controls for withdrawing (see issue: discard / not serious).
+  seriousCheckLabel:
+    "I did not answer this survey seriously. Please do NOT use my responses.",
+  discardConfirmText:
+    "No problem at all — nothing has been saved and you can simply close this " +
+    "tab. Thank you anyway!",
 
   // How many times each scenario video may be played.
   maxVideoPlays: 3,
@@ -86,12 +99,16 @@ const consentStep = {
 const demographicStep = {
   id: "demographics",
   video: null,
-  title: "A few questions about you",
+  title: "A Few Questions About You",
+  help:
+    "Just some basics about who is taking part — this only helps us describe " +
+    "the group of people in the study. Pick “Prefer not to say” for anything " +
+    "you would rather skip.",
   questions: [
     {
       id: "Q002",
       type: "dropdown",
-      prompt: "Age group",
+      prompt: "Age Group",
       options: [
         "18-20",
         "21-25",
@@ -112,13 +129,18 @@ const demographicStep = {
     {
       id: "Q010",
       type: "single-choice",
-      prompt: "Country of residence",
+      prompt: "Country of Residence",
+      allowOther: true,
+      otherLabel: "Another country",
+      otherPlaceholder: "Which country do you live in?",
       options: ["Germany"],
     },
     {
       id: "Q011",
       type: "dropdown",
-      prompt: "Current status",
+      prompt: "Current Status",
+      allowOther: true,
+      otherPlaceholder: "Please describe your current status",
       options: [
         "Apprentice / Trainee",
         "Student",
@@ -131,7 +153,9 @@ const demographicStep = {
     {
       id: "Q012",
       type: "dropdown",
-      prompt: "Field of study / occupation",
+      prompt: "Field of Study / Occupation",
+      allowOther: true,
+      otherPlaceholder: "Please name your field of study or occupation",
       options: [
         "Agriculture",
         "Business & Administration",
@@ -168,12 +192,18 @@ const AGREE_SCALE = {
 const introStep = {
   id: "intro-questions",
   video: null,
-  title: "Introductory questions",
+  title: "Introductory Questions",
+  help: "Two short sets of statements before the video clips begin.",
   questions: [
     {
       id: "Q008",
       type: "grid",
-      prompt: "Prior knowledge and experience",
+      prompt: "Prior Knowledge and Experience",
+      help:
+        "This is just to get a sense of how familiar this whole topic already " +
+        "is to you — robots themselves, and the ethical discussions around " +
+        "them. There are no right answers, so go with your gut. Drag each " +
+        "slider from “Strongly disagree” to “Strongly agree”.",
       ...AGREE_SCALE,
       items: [
         { code: "SQ001", label: "I have prior experience working with or studying robots." },
@@ -186,7 +216,10 @@ const introStep = {
     {
       id: "Q009",
       type: "grid",
-      prompt: "Personal reflection",
+      prompt: "Personal Reflection",
+      help:
+        "Now a few statements about how you personally feel about robots and " +
+        "new technology in general. Again, just your honest first reaction.",
       ...AGREE_SCALE,
       items: [
         { code: "SQ001", label: "In general, I tend to trust new technology." },
@@ -202,12 +235,34 @@ const introStep = {
 };
 
 // ----------------------------------------------------------------------------
+// 3b. ATTENTION CHECK  (inserted roughly two-thirds of the way through)
+// ----------------------------------------------------------------------------
+const attentionStep = {
+  id: "attention-check",
+  video: null,
+  title: "Quick Check",
+  help:
+    "Just making sure the page is working for you and that you are still with " +
+    "us — this one is not about your opinion.",
+  questions: [
+    {
+      id: "attention_check",
+      type: "slider",
+      prompt: "To show you are paying attention, please set this slider to +3.",
+      min: -5,
+      max: 5,
+      step: 1,
+      minLabel: "-5",
+      maxLabel: "+5",
+    },
+  ],
+};
+
+// ----------------------------------------------------------------------------
 // 4. SCENARIO-BASED QUESTIONS
 //
 // The same 6-item question block (LimeSurvey code Q020) is asked after every
-// scenario video. Add / edit your clips in `videos` below. `url` can be a file
-// you dropped in `public/videos/` (e.g. "/videos/scenario-01.mp4") or a full
-// public URL (e.g. a Cloudflare R2 link).
+// scenario video. Add / edit your clips in `videos` below.
 // ----------------------------------------------------------------------------
 const INTENSITY_SCALE = {
   min: -5,
@@ -221,7 +276,10 @@ const INTENSITY_SCALE = {
 const scenarioQuestion = {
   id: "Q020",
   type: "grid",
-  prompt: "How did you — as a person in this scene — experience the interaction?",
+  prompt: "How did you experience this interaction?",
+  help:
+    "Think back to the clip you just watched and imagine you were one of the " +
+    "people in the scene. Drag each slider to wherever feels right for you.",
   ...INTENSITY_SCALE,
   items: [
     { code: "SQ001", label: "How comfortable did you feel during this interaction?" },
@@ -293,7 +351,8 @@ const videoSteps = orderedVideos.map((v, i) => ({
 const finalStep = {
   id: "final-remarks",
   video: null,
-  title: "Final remarks",
+  title: "Final Remarks",
+  help: "Almost done — these two questions are optional.",
   questions: [
     {
       id: "Q017",
@@ -309,10 +368,15 @@ const finalStep = {
   ],
 };
 
+// Insert the attention check about two-thirds of the way through the videos.
+const attentionAfter = Math.round((videoSteps.length * 2) / 3);
+
 export const steps = [
   consentStep,
   demographicStep,
   introStep,
-  ...videoSteps,
+  ...videoSteps.slice(0, attentionAfter),
+  attentionStep,
+  ...videoSteps.slice(attentionAfter),
   finalStep,
 ];

@@ -1,21 +1,29 @@
 import { useRef, useState } from "react";
 
+// The play counter lives on the component instance. App.jsx gives <VideoStage>
+// a `key` per scenario, so every video starts again at 0 / maxPlays.
 export default function VideoStage({ src, label, maxPlays }) {
   const videoRef = useRef(null);
-  const [playCount, setPlayCount] = useState(0);
-  const limitReached = maxPlays != null && playCount >= maxPlays;
+  const [startedCount, setStartedCount] = useState(0);
+  const [ended, setEnded] = useState(false);
+
+  const limited = maxPlays != null;
+  // Grey out only once the LAST allowed play has actually finished.
+  const blocked = limited && startedCount >= maxPlays && ended;
 
   function handlePlay() {
-    if (limitReached) {
-      videoRef.current?.pause();
+    const video = videoRef.current;
+    const freshStart = (video?.currentTime ?? 0) < 0.5;
+    if (!freshStart) return; // resuming after a pause — never counts
+
+    if (limited && startedCount >= maxPlays) {
+      // Would be one play too many — stop it before it really starts.
+      video?.pause();
+      setEnded(true);
       return;
     }
-    // Nur einen frischen Start (nicht ein Fortsetzen nach Pause) als
-    // eine Wiedergabe zählen.
-    const startedFromBeginning = (videoRef.current?.currentTime ?? 0) < 0.5;
-    if (startedFromBeginning) {
-      setPlayCount((c) => c + 1);
-    }
+    setEnded(false);
+    setStartedCount((c) => c + 1);
   }
 
   return (
@@ -24,9 +32,9 @@ export default function VideoStage({ src, label, maxPlays }) {
         <span className="font-mono text-xs tracking-wider text-white/70 uppercase">
           {label}
         </span>
-        {maxPlays != null && (
+        {limited && (
           <span className="font-mono text-xs text-white/70">
-            Plays {Math.min(playCount, maxPlays)}/{maxPlays}
+            Plays {Math.min(startedCount, maxPlays)}/{maxPlays}
           </span>
         )}
       </div>
@@ -36,18 +44,19 @@ export default function VideoStage({ src, label, maxPlays }) {
           key={src}
           ref={videoRef}
           src={src}
-          controls={!limitReached}
+          controls={!blocked}
           controlsList="nodownload"
           onPlay={handlePlay}
+          onEnded={() => setEnded(true)}
           className="w-full aspect-video bg-black"
         >
           Your browser does not support the video element.
         </video>
 
-        {limitReached && (
+        {blocked && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/70 px-6 text-center">
             <p className="font-mono text-sm text-white">
-              Maximum number of plays reached ({maxPlays}×)
+              You have watched this clip {maxPlays} times.
             </p>
           </div>
         )}

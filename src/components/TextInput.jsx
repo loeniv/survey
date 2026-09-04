@@ -3,10 +3,15 @@ export default function TextInput({ question, value, onChange }) {
     <div>
       <label
         htmlFor={question.id}
-        className="block font-display text-lg font-medium text-[var(--color-ink)] mb-4"
+        className="block font-display text-lg font-medium text-[var(--color-ink)] mb-2"
       >
         {question.prompt}
       </label>
+      {question.help && (
+        <p className="text-sm text-[var(--color-ink-muted)] leading-relaxed mb-4">
+          {question.help}
+        </p>
+      )}
       <textarea
         id={question.id}
         value={value ?? ""}

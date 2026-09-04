@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { surveyConfig, steps } from "./data/survey";
-import { supabase } from "./lib/supabaseClient";
+import { supabase, isSupabaseConfigured } from "./lib/supabaseClient";
+import { OTHER } from "./components/ChoiceInput";
 import VideoStage from "./components/VideoStage";
 import Question from "./components/Question";
 import ProgressTimeline from "./components/ProgressTimeline";
@@ -12,6 +13,7 @@ const PHASES = {
   SUBMITTING: "submitting",
   INTEREST: "interest",
   DONE: "done",
+  DISCARDED: "discarded",
   ERROR: "error",
 };
 
@@ -23,6 +25,16 @@ function Shell({ children }) {
   );
 }
 
+// Pull the effective answer string out of a possibly-{choice,other} value.
+function choiceValue(value) {
+  if (value && typeof value === "object" && "choice" in value) {
+    return value.choice === OTHER
+      ? (value.other ?? "").trim()
+      : value.choice ?? "";
+  }
+  return value ?? "";
+}
+
 // Whether a question has been answered well enough to move on. Questions that
 // were optional in LimeSurvey (grids, free text) never block the "Next" button.
 function isAnswered(question, value) {
@@ -32,7 +44,9 @@ function isAnswered(question, value) {
     case "dropdown":
     case "single-choice":
     case "multiple-choice":
+      return choiceValue(value) !== "";
     case "scale":
+    case "slider":
       return value !== undefined && value !== null && value !== "";
     default:
       return true;
@@ -93,6 +107,19 @@ function buildRows(answers, participantId) {
         continue;
       }
 
+      if (q.allowOther || (value && typeof value === "object")) {
+        const v = choiceValue(value);
+        if (v !== "") {
+          rows.push({
+            participant_id: participantId,
+            video_id: videoId,
+            question_id: q.id,
+            answer: v,
+          });
+        }
+        continue;
+      }
+
       if (value !== undefined && value !== null && value !== "") {
         rows.push({
           participant_id: participantId,
@@ -110,9 +137,12 @@ export default function App() {
   const [phase, setPhase] = useState(PHASES.INTRO);
   const [stepIndex, setStepIndex] = useState(0);
   const [answers, setAnswers] = useState({});
+  const [excludeMe, setExcludeMe] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
   const participantId = useMemo(() => crypto.randomUUID(), []);
 
   const currentStep = steps[stepIndex];
+  const isLastStep = stepIndex === steps.length - 1;
   const questionsInStep = currentStep?.questions ?? [];
   const stepAnswered = questionsInStep.every((q) =>
     isAnswered(q, answers[answerKey(currentStep, q)])
@@ -125,9 +155,12 @@ export default function App() {
   }
 
   async function handleNext() {
-    if (stepIndex < steps.length - 1) {
+    if (!isLastStep) {
       setStepIndex((i) => i + 1);
       window.scrollTo({ top: 0, behavior: "smooth" });
+    } else if (excludeMe) {
+      // Participant said they did not answer seriously — save nothing.
+      setPhase(PHASES.DISCARDED);
     } else {
       await submit();
     }
@@ -142,10 +175,19 @@ export default function App() {
 
   async function submit() {
     setPhase(PHASES.SUBMITTING);
+    if (!isSupabaseConfigured) {
+      setErrorMsg(
+        "The survey is not fully set up yet (database connection missing). " +
+          "Please let the researcher know."
+      );
+      setPhase(PHASES.ERROR);
+      return;
+    }
     const rows = buildRows(answers, participantId);
     const { error } = await supabase.from("responses").insert(rows);
     if (error) {
       console.error(error);
+      setErrorMsg(error.message || "");
       setPhase(PHASES.ERROR);
     } else {
       setPhase(PHASES.INTEREST);
@@ -187,15 +229,27 @@ export default function App() {
     return (
       <Shell>
         <h1 className="font-display text-2xl font-semibold mb-3">Something went wrong</h1>
-        <p className="text-[var(--color-ink-muted)] mb-6">
+        <p className="text-[var(--color-ink-muted)] mb-4">
           Your answers could not be saved. Please check your internet connection and try again.
         </p>
+        {errorMsg && (
+          <p className="font-mono text-xs text-[var(--color-ink-muted)] bg-[var(--color-surface)] border border-[var(--color-line)] rounded-lg p-3 mb-6 break-words">
+            {errorMsg}
+          </p>
+        )}
         <button
           onClick={submit}
-          className="w-full rounded-lg bg-[var(--color-accent)] text-white font-medium py-3"
+          className="w-full rounded-lg bg-[var(--color-accent)] text-white font-medium py-3 mb-4"
         >
           Try again
         </button>
+        <p className="text-sm text-[var(--color-ink-muted)]">
+          Still not working? You can email the researcher directly at{" "}
+          <a className="text-[var(--color-accent)] underline" href={`mailto:${surveyConfig.contactEmail}`}>
+            {surveyConfig.contactEmail}
+          </a>
+          .
+        </p>
       </Shell>
     );
   }
@@ -227,6 +281,17 @@ export default function App() {
     );
   }
 
+  if (phase === PHASES.DISCARDED) {
+    return (
+      <Shell>
+        <h1 className="font-display text-2xl font-semibold mb-3">All good</h1>
+        <p className="text-[var(--color-ink-muted)] whitespace-pre-line">
+          {surveyConfig.discardConfirmText}
+        </p>
+      </Shell>
+    );
+  }
+
   // phase === PHASES.SURVEY
   return (
     <Shell>
@@ -236,6 +301,7 @@ export default function App() {
 
       {currentStep.videoUrl && (
         <VideoStage
+          key={currentStep.id}
           src={currentStep.videoUrl}
           label={currentStep.videoLabel}
           maxPlays={surveyConfig.maxVideoPlays}
@@ -243,11 +309,17 @@ export default function App() {
       )}
 
       {currentStep.title && (
-        <h2 className="font-display text-2xl font-semibold mb-4">{currentStep.title}</h2>
+        <h2 className="font-display text-2xl font-semibold mb-2">{currentStep.title}</h2>
+      )}
+
+      {currentStep.help && (
+        <p className="text-sm text-[var(--color-ink-muted)] leading-relaxed mb-4 whitespace-pre-line">
+          {withCount(currentStep.help)}
+        </p>
       )}
 
       {currentStep.intro && (
-        <div className="rounded-lg border border-[var(--color-line)] bg-[var(--color-surface)] p-4 mb-8">
+        <div className="rounded-lg border border-[var(--color-line)] bg-[var(--color-surface)] p-4 mb-8 mt-2">
           <p className="text-sm text-[var(--color-ink-muted)] leading-relaxed whitespace-pre-line">
             {withCount(currentStep.intro)}
           </p>
@@ -268,6 +340,20 @@ export default function App() {
         })}
       </div>
 
+      {isLastStep && (
+        <label className="mt-8 flex items-start gap-3 rounded-lg border border-[var(--color-line)] bg-[var(--color-surface)] px-4 py-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={excludeMe}
+            onChange={(e) => setExcludeMe(e.target.checked)}
+            className="mt-0.5 h-4 w-4 flex-shrink-0 accent-[var(--color-accent)]"
+          />
+          <span className="text-sm leading-relaxed text-[var(--color-ink-muted)]">
+            {surveyConfig.seriousCheckLabel}
+          </span>
+        </label>
+      )}
+
       <div className="mt-10 flex items-center justify-between">
         <button
           onClick={handleBack}
@@ -281,7 +367,7 @@ export default function App() {
           disabled={!stepAnswered}
           className="rounded-lg bg-[var(--color-accent)] text-white font-medium px-6 py-2.5 disabled:opacity-30 hover:opacity-90 transition-opacity"
         >
-          {stepIndex < steps.length - 1 ? "Next" : "Submit"}
+          {!isLastStep ? "Next" : excludeMe ? "Finish without saving" : "Submit"}
         </button>
       </div>
     </Shell>

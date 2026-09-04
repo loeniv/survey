@@ -10,9 +10,14 @@ export default function GridSlider({ question, value, onChange }) {
 
   return (
     <fieldset>
-      <legend className="font-display text-lg font-medium text-[var(--color-ink)] mb-3">
+      <legend className="font-display text-lg font-medium text-[var(--color-ink)] mb-2">
         {question.prompt}
       </legend>
+      {question.help && (
+        <p className="text-sm text-[var(--color-ink-muted)] leading-relaxed mb-4">
+          {question.help}
+        </p>
+      )}
 
       <div className="flex justify-between font-mono text-xs text-[var(--color-ink-muted)] mb-5">
         <span>

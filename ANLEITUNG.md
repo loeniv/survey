@@ -92,26 +92,38 @@ aber gut von Hand), sag Bescheid – dann zeige ich dir den Upload per
 
 ## 4. Fragen anpassen
 
-Alles steht in `src/data/survey.js`, in fünf Blöcken (in dieser Reihenfolge):
+Alles steht in `src/data/survey.js`, in Blöcken (in dieser Reihenfolge):
 
 - **`surveyConfig`**: Titel, Begrüßungstext (`intro`), Consent-Zeile,
-  Schlusstext (`endText`), `maxVideoPlays` und die Kontaktdaten
-  (`contactEmail`, `contactSubject`, `contactBody`) für die Interesse-Sektion.
-- **`consentStep`**: die zwei Pflicht-Häkchen. Der Begrüßungstext wird
-  darüber als „information above" angezeigt.
-- **`demographicStep`**: Alter, Geschlecht, Land, Status, Fachrichtung
-  (Typen `dropdown` bzw. `single-choice`). Optionen in den `options`-Listen.
-- **`introStep`**: zwei Slider-Blöcke (Typ `grid`, Skala −5 … 0 … +5),
-  „Prior knowledge" und „Personal reflection".
-- **`scenarioQuestion` + `videos`**: der 6-Item-Slider-Block wird nach
-  **jedem** Video gezeigt. Frage-Item ändern = einmal ändern, wirkt für alle
-  13 Videos.
-- **`finalStep`**: zwei Freitext-Fragen.
+  Schlusstext (`endText`), Texte für den „nicht ernst gemeint"-Ausstieg
+  (`seriousCheckLabel`, `discardConfirmText`), `maxVideoPlays` und die
+  Kontaktdaten (`contactEmail`, `contactSubject`, `contactBody`).
+- **`consentStep`**: die zwei Pflicht-Häkchen.
+- **`demographicStep`**: Alter, Geschlecht, Land, Status, Fachrichtung.
+  Land/Status/Fachrichtung haben `allowOther: true` → es gibt eine
+  „Other"-Option, die ein Textfeld öffnet; der eingetippte Text wird als
+  Antwort gespeichert.
+- **`introStep`**: zwei Slider-Blöcke (Typ `grid`, Skala −5 … 0 … +5).
+- **`attentionStep`**: die Aufmerksamkeits-Frage („set this slider to +3"),
+  wird automatisch nach ~2/3 der Videos eingeblendet. Antwort landet unter
+  `question_id = "attention_check"` – bei der Auswertung alle rausfiltern, die
+  nicht `3` gesetzt haben.
+- **`scenarioQuestion` + `videos`**: der 6-Item-Slider-Block nach **jedem**
+  Video.
+- **`finalStep`**: zwei Freitext-Fragen. Darunter das Häkchen „I did not
+  answer seriously" – wenn angehakt, wird **nichts** gespeichert.
+
+**Erklärtexte:** Jeder Schritt/jede Frage kann ein `help: "…"` bekommen –
+ein kurzer, freundlicher Erklärsatz unter der Überschrift.
+
+**Titel:** Überschriften in `title` / `prompt` bitte in *Title Case*
+schreiben (z. B. „Prior Knowledge and Experience").
 
 **Wichtig zu den Slidern:** Ein Slider zählt erst als beantwortet, wenn er
 bewegt wurde. Unbewegte Slider werden **nicht** gespeichert (nicht als 0).
-Willst du „nicht bewegt" trotzdem als 0 erfassen, sag Bescheid — das ist eine
-Zeile Code.
+
+**Video-Abspiellimit:** 3× pro Video, zählt pro Video neu. Der Ausgrau-
+Hinweis kommt erst, **nachdem** der 3. Durchlauf komplett zu Ende ist.
 
 ## Interesse-Sektion (Realstudie)
 
@@ -170,6 +182,22 @@ Das Projekt ist bereits ein Git-Repository mit erstem Commit (`main`).
 
 **Änderungen später:** einfach `git push` (bzw. in GitHub Desktop *Push
 origin*) – Vercel deployt automatisch neu.
+
+**d) Wenn beim Abschicken „Something went wrong" kommt**
+
+Meistens fehlen die Environment Variables im Build. Vite backt die
+`VITE_…`-Werte **beim Bauen** ein – wurden sie erst *nach* dem ersten Deploy
+gesetzt, kennt die Live-Version sie nicht.
+
+1. Vercel → Projekt → *Settings → Environment Variables*: beide Einträge
+   (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`) da, Häkchen bei
+   **Production** (am besten alle drei).
+2. Dann *Deployments* → beim neuesten oben rechts **⋯ → Redeploy** (oder
+   einmal in GitHub Desktop pushen). Erst der Build *nach* dem Setzen der
+   Variablen enthält sie.
+
+Die neue Fehlerseite zeigt jetzt auch die technische Meldung an – falls es
+was anderes ist, schick mir einen Screenshot davon.
 
 ## Antworten später auswerten
 
