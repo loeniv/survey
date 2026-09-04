@@ -94,30 +94,40 @@ aber gut von Hand), sag Bescheid – dann zeige ich dir den Upload per
 
 Alles steht in `src/data/survey.js`, in Blöcken (in dieser Reihenfolge):
 
-- **`surveyConfig`**: Titel, Begrüßungstext (`intro`), Consent-Zeile,
-  Schlusstext (`endText`), Texte für den „nicht ernst gemeint"-Ausstieg
-  (`seriousCheckLabel`, `discardConfirmText`), `maxVideoPlays` und die
-  Kontaktdaten (`contactEmail`, `contactSubject`, `contactBody`).
+- **`surveyConfig`**:
+  - `intro` = **Seite 1** (Hinführung zum Thema).
+  - `practical` = **Seite 2** (praktische Hinweise, steht über den Consent-Häkchen).
+  - `consent` = die kurze Zeile im Kasten auf Seite 1.
+  - `endText`, `seriousCheckLabel`, `discardConfirmText`, `maxVideoPlays`.
+  - Interesse-Sektion: `interestHeading`, `interestText`, `contactEmail`,
+    `contactSubject`, `contactBody`.
 - **`consentStep`**: die zwei Pflicht-Häkchen.
 - **`demographicStep`**: Alter, Geschlecht, Land, Status, Fachrichtung.
-  Land/Status/Fachrichtung haben `allowOther: true` → es gibt eine
-  „Other"-Option, die ein Textfeld öffnet; der eingetippte Text wird als
-  Antwort gespeichert.
-- **`introStep`**: zwei Slider-Blöcke (Typ `grid`, Skala −5 … 0 … +5).
-- **`attentionStep`**: die Aufmerksamkeits-Frage („set this slider to +3"),
-  wird automatisch nach ~2/3 der Videos eingeblendet. Antwort landet unter
-  `question_id = "attention_check"` – bei der Auswertung alle rausfiltern, die
-  nicht `3` gesetzt haben.
+  Land/Status/Fachrichtung haben `allowOther: true` → „Other"-Option öffnet
+  ein Textfeld; der eingetippte Text wird als Antwort gespeichert.
+- **`introStep`**: zwei Slider-Blöcke (Typ `grid`, Skala −5 bis +5).
+- **`attentionQuestion`**: die Aufmerksamkeits-Frage. Sie ist **keine eigene
+  Seite** mehr, sondern hängt als zusätzlicher Slider an **einem** Szenario
+  (ca. 2/3 durch, per `attentionAt` gesteuert). Antwort unter
+  `question_id = "attention_check"` – bei der Auswertung alle rausfiltern,
+  die nicht `3` gesetzt haben.
 - **`scenarioQuestion` + `videos`**: der 6-Item-Slider-Block nach **jedem**
   Video.
 - **`finalStep`**: zwei Freitext-Fragen. Darunter das Häkchen „I did not
   answer seriously" – wenn angehakt, wird **nichts** gespeichert.
 
-**Erklärtexte:** Jeder Schritt/jede Frage kann ein `help: "…"` bekommen –
-ein kurzer, freundlicher Erklärsatz unter der Überschrift.
+**Erklärtexte:** Jeder Schritt/jede Frage kann ein `help: "…"` bekommen,
+ein kurzer freundlicher Erklärsatz unter der Überschrift.
 
-**Titel:** Überschriften in `title` / `prompt` bitte in *Title Case*
-schreiben (z. B. „Prior Knowledge and Experience").
+**Titel:** Überschriften in `title` / `prompt` in *Title Case* (z. B.
+„Prior Knowledge and Experience").
+
+**Keine Gedankenstriche** im Teilnehmer-Text: nur Kommas, Punkte oder
+Klammern verwenden.
+
+**Video:** eigener „Fullscreen"-Knopf oben im Player, zusätzlich der native
+Vollbild-Button. Läuft auch auf dem Handy (`playsInline`, keine Zwangs-
+Vollbild-Wiedergabe auf iOS).
 
 **Wichtig zu den Slidern:** Ein Slider zählt erst als beantwortet, wenn er
 bewegt wurde. Unbewegte Slider werden **nicht** gespeichert (nicht als 0).

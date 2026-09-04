@@ -19,51 +19,75 @@
 // Any "dropdown" / "single-choice" question can set `allowOther: true`. That
 // adds an "Other" choice; picking it reveals a text box and the typed text is
 // stored as the answer.
-// Every question may have a `help` string — a short, friendly explanation
-// shown under the question title.
+// Every question may have a `help` string, a short friendly explanation shown
+// under the question title.
+//
+// Style note: no dashes as punctuation anywhere in participant-facing text.
+// Use commas, full stops or parentheses instead.
 // ============================================================================
 
 export const surveyConfig = {
   title: "Ethical Perception Index",
 
-  // Shown on the welcome screen and again above the consent checkboxes.
-  // "{count}" is replaced automatically with the number of scenario videos.
+  // PAGE 1: leads into the topic. "{count}" becomes the number of clips.
   intro:
-    "Thanks so much for taking part — it really helps. You'll watch {count} " +
-    "short video clips of a humanoid robot (Unitree G1) moving around and " +
-    "interacting in a shared space. After each clip there are a few quick " +
-    "questions about how it made you feel. There are no right or wrong " +
-    "answers: just picture yourself as someone in the scene and go with your " +
-    "first impression.\n\n" +
-    "It takes about 15–20 minutes. Your answers are anonymous and used only " +
-    "for academic research (a master's thesis). You can stop at any time, no " +
-    "reason needed.",
+    "Robots and automated systems are becoming a much bigger part of everyday " +
+    "life, from warehouses and hospitals to shops, stations and pavements. " +
+    "They are also learning to act more and more on their own, making " +
+    "decisions in the moment without a person guiding every step.\n\n" +
+    "When that happens, being technically safe and functional is no longer " +
+    "enough. People also judge a robot by how its behaviour feels: whether it " +
+    "seems fair, trustworthy, predictable and considerate of the people " +
+    "around it. These social and ethical qualities strongly shape whether we " +
+    "accept a robot, yet they are usually studied one factor at a time. There " +
+    "is still no common yardstick for the ethical quality of a robot's " +
+    "behaviour as a whole. This study is a first step towards building one.\n\n" +
+    "In the clips that follow you will see a humanoid robot (Unitree G1) " +
+    "moving and interacting in a shared space. For each clip, please imagine " +
+    "that you are one of the people in the scene and tell us how it made you " +
+    "feel. There are no right or wrong answers, only your honest first " +
+    "impression.",
 
   // Short line shown inside the bordered box on the welcome screen.
   consent:
     "By continuing you confirm the statements below. Your answers are stored " +
     "anonymously and cannot be linked back to you.",
 
+  // PAGE 2: practical notes, shown above the consent checkboxes.
+  practical:
+    "A few practical notes before you begin. The survey takes about 15 to 20 " +
+    "minutes. You will watch {count} short clips and answer a handful of quick " +
+    "questions after each one. Your answers are anonymous and used only for " +
+    "academic research (a master's thesis). You can stop at any time, no " +
+    "reason needed.",
+
   // Shown on the very last screen.
   endText:
-    "Hope you have a great day!\n\nThank you again and kind regards,\nLeonie",
+    "Hope you have a great day.\n\nThank you again and kind regards,\nLeonie",
 
-  // Final-step controls for withdrawing (see issue: discard / not serious).
+  // Final-step controls for withdrawing.
   seriousCheckLabel:
     "I did not answer this survey seriously. Please do NOT use my responses.",
   discardConfirmText:
-    "No problem at all — nothing has been saved and you can simply close this " +
-    "tab. Thank you anyway!",
+    "No problem at all. Nothing has been saved and you can simply close this " +
+    "tab. Thank you anyway.",
 
   // How many times each scenario video may be played.
   maxVideoPlays: 3,
 
   // "Interest in the real-world study" section at the end.
+  interestHeading: "Interested in the real-world study?",
+  interestText:
+    "As a next step we are planning real-world validation experiments with the " +
+    "robot at the research centre in Garching. We would be glad if you would " +
+    "like to take part. Participation is completely voluntary and optional, " +
+    "and it has no connection to your answers above. If you are interested, " +
+    "use the button below or simply email us.",
   contactEmail: "leonie.voegler@yahoo.de",
   contactSubject: "Interest in Garching Real-World Study",
   contactBody:
-    "Hello,\n\nI am interested in participating in the real-world study at the " +
-    "research center in Garching.\n\nBest regards",
+    "Hello,\n\nI am interested in taking part in the real-world validation " +
+    "experiments at the research centre in Garching.\n\nBest regards",
 };
 
 // ----------------------------------------------------------------------------
@@ -72,7 +96,7 @@ export const surveyConfig = {
 const consentStep = {
   id: "consent",
   video: null,
-  intro: surveyConfig.intro, // the "information above" the second checkbox refers to
+  intro: surveyConfig.practical, // the "information above" the second checkbox refers to
   questions: [
     {
       id: "Q001",
@@ -101,7 +125,7 @@ const demographicStep = {
   video: null,
   title: "A Few Questions About You",
   help:
-    "Just some basics about who is taking part — this only helps us describe " +
+    "Just some basics about who is taking part. This only helps us describe " +
     "the group of people in the study. Pick “Prefer not to say” for anything " +
     "you would rather skip.",
   questions: [
@@ -110,14 +134,14 @@ const demographicStep = {
       type: "dropdown",
       prompt: "Age Group",
       options: [
-        "18-20",
-        "21-25",
-        "26-30",
-        "31-35",
-        "36-40",
-        "41-50",
-        "51-60",
-        "61-70",
+        "18 to 20",
+        "21 to 25",
+        "26 to 30",
+        "31 to 35",
+        "36 to 40",
+        "41 to 50",
+        "51 to 60",
+        "61 to 70",
       ],
     },
     {
@@ -142,7 +166,7 @@ const demographicStep = {
       allowOther: true,
       otherPlaceholder: "Please describe your current status",
       options: [
-        "Apprentice / Trainee",
+        "Apprentice or Trainee",
         "Student",
         "Employed",
         "Self-employed",
@@ -153,24 +177,24 @@ const demographicStep = {
     {
       id: "Q012",
       type: "dropdown",
-      prompt: "Field of Study / Occupation",
+      prompt: "Field of Study or Occupation",
       allowOther: true,
       otherPlaceholder: "Please name your field of study or occupation",
       options: [
         "Agriculture",
-        "Business & Administration",
-        "Design, Arts, Architecture & Media",
-        "Education & Pedagogy",
-        "Engineering & Manufacturing (Mechanical, Electrical, Robotics, etc.)",
-        "Finance & Economics",
-        "Healthcare, Medicine & Nursing",
-        "Humanities (Philosophy, History, Languages, etc.)",
-        "IT & Computer Science",
+        "Business and Administration",
+        "Design, Arts, Architecture and Media",
+        "Education and Pedagogy",
+        "Engineering and Manufacturing (mechanical, electrical, robotics, etc.)",
+        "Finance and Economics",
+        "Healthcare, Medicine and Nursing",
+        "Humanities (philosophy, history, languages, etc.)",
+        "IT and Computer Science",
         "Law",
-        "Natural Sciences (Physics, Biology, Chemistry, etc.)",
-        "Real Estate & Property Management",
-        "Retail & Services",
-        "Social Sciences & Psychology",
+        "Natural Sciences (physics, biology, chemistry, etc.)",
+        "Real Estate and Property Management",
+        "Retail and Services",
+        "Social Sciences and Psychology",
         "Prefer not to say",
       ],
     },
@@ -201,13 +225,13 @@ const introStep = {
       prompt: "Prior Knowledge and Experience",
       help:
         "This is just to get a sense of how familiar this whole topic already " +
-        "is to you — robots themselves, and the ethical discussions around " +
-        "them. There are no right answers, so go with your gut. Drag each " +
-        "slider from “Strongly disagree” to “Strongly agree”.",
+        "is to you, robots themselves as well as the ethical discussions " +
+        "around them. There are no right answers, so go with your gut. Drag " +
+        "each slider from “Strongly disagree” to “Strongly agree”.",
       ...AGREE_SCALE,
       items: [
         { code: "SQ001", label: "I have prior experience working with or studying robots." },
-        { code: "SQ002", label: "I am familiar with ethical concepts and discussions around AI/robotics." },
+        { code: "SQ002", label: "I am familiar with ethical concepts and discussions around AI and robotics." },
         { code: "SQ003", label: "I have interacted with a robot in person before." },
         { code: "SQ004", label: "I have interacted specifically with a humanoid robot before." },
         { code: "SQ005", label: "I have participated in a human-robot interaction study before." },
@@ -230,30 +254,6 @@ const introStep = {
         { code: "SQ006", label: "I believe robots can behave in a fair and unbiased way." },
         { code: "SQ007", label: "I would feel safe walking past a robot in a shared space." },
       ],
-    },
-  ],
-};
-
-// ----------------------------------------------------------------------------
-// 3b. ATTENTION CHECK  (inserted roughly two-thirds of the way through)
-// ----------------------------------------------------------------------------
-const attentionStep = {
-  id: "attention-check",
-  video: null,
-  title: "Quick Check",
-  help:
-    "Just making sure the page is working for you and that you are still with " +
-    "us — this one is not about your opinion.",
-  questions: [
-    {
-      id: "attention_check",
-      type: "slider",
-      prompt: "To show you are paying attention, please set this slider to +3.",
-      min: -5,
-      max: 5,
-      step: 1,
-      minLabel: "-5",
-      maxLabel: "+5",
     },
   ],
 };
@@ -283,22 +283,37 @@ const scenarioQuestion = {
   ...INTENSITY_SCALE,
   items: [
     { code: "SQ001", label: "How comfortable did you feel during this interaction?" },
-    { code: "SQ002", label: "How fair did the robot's behavior seem toward the people in the scene?" },
-    { code: "SQ003", label: "How predictable was the robot's behavior?" },
+    { code: "SQ002", label: "How fair did the robot's behaviour seem toward the people in the scene?" },
+    { code: "SQ003", label: "How predictable was the robot's behaviour?" },
     { code: "SQ004", label: "How safe did you feel during this interaction?" },
     { code: "SQ005", label: "How much would you trust this robot in this situation?" },
-    { code: "SQ006", label: "How ethically appropriate would you rate the robot's behavior overall?" },
+    { code: "SQ006", label: "How ethically appropriate would you rate the robot's behaviour overall?" },
   ],
 };
 
-// Where the video files are served from — a Cloudflare R2 public bucket.
-// The clips were uploaded inside a "00_final_videos/" folder, so that prefix
-// is part of the base URL. To go back to local files (in public/videos/),
-// set this to "/videos".
+// Attention check. It is NOT its own page: it is attached to one scenario
+// (see below) so it blends in as one more slider. Filter out anyone whose
+// "attention_check" answer is not 3.
+const attentionQuestion = {
+  id: "attention_check",
+  type: "slider",
+  prompt:
+    "As a quick check that the sliders are working for you, please set this one to +3.",
+  min: -5,
+  max: 5,
+  step: 1,
+  minLabel: "-5",
+  maxLabel: "+5",
+};
+
+// Where the video files are served from (a Cloudflare R2 public bucket). The
+// clips were uploaded inside a "00_final_videos/" folder, so that prefix is
+// part of the base URL. To go back to local files (in public/videos/), set
+// this to "/videos".
 const VIDEO_BASE =
   "https://pub-7d29a674a3ed479ba3d497bb7504ae01.r2.dev/00_final_videos";
 
-// One entry per clip. `id` is stored in the database as `video_id` — keep the
+// One entry per clip. `id` is stored in the database as `video_id`, keep the
 // descriptive names so you can tell the conditions apart when analysing.
 const videos = [
   { id: "baseline", file: "baseline_LV.mp4" },
@@ -316,7 +331,7 @@ const videos = [
   { id: "worst_case", file: "worst_case_LV.mp4" },
 ];
 
-// Fisher–Yates shuffle.
+// Fisher-Yates shuffle.
 function shuffle(input) {
   const a = [...input];
   for (let i = a.length - 1; i > 0; i--) {
@@ -327,9 +342,9 @@ function shuffle(input) {
 }
 
 // "baseline" is always shown first; every other clip is put in a random order
-// that is drawn fresh for each participant (once per page load), so the
-// sequence cannot bias the results. The position each participant actually saw
-// is stored with their answers (question_id "presentation_order").
+// drawn fresh for each participant (once per page load), so the sequence
+// cannot bias the results. The position each participant actually saw is
+// stored with their answers (question_id "presentation_order").
 const baselineVideo = videos.find((v) => v.id === "baseline");
 const otherVideos = videos.filter((v) => v.id !== "baseline");
 const orderedVideos = [
@@ -345,6 +360,16 @@ const videoSteps = orderedVideos.map((v, i) => ({
   questions: [scenarioQuestion],
 }));
 
+// Hide the attention check inside the scenario about two-thirds of the way in.
+const attentionAt = Math.min(
+  videoSteps.length - 1,
+  Math.round((videoSteps.length * 2) / 3)
+);
+videoSteps[attentionAt] = {
+  ...videoSteps[attentionAt],
+  questions: [scenarioQuestion, attentionQuestion],
+};
+
 // ----------------------------------------------------------------------------
 // 5. FINAL REMARKS
 // ----------------------------------------------------------------------------
@@ -352,7 +377,7 @@ const finalStep = {
   id: "final-remarks",
   video: null,
   title: "Final Remarks",
-  help: "Almost done — these two questions are optional.",
+  help: "Almost done. These two questions are optional.",
   questions: [
     {
       id: "Q017",
@@ -368,15 +393,10 @@ const finalStep = {
   ],
 };
 
-// Insert the attention check about two-thirds of the way through the videos.
-const attentionAfter = Math.round((videoSteps.length * 2) / 3);
-
 export const steps = [
   consentStep,
   demographicStep,
   introStep,
-  ...videoSteps.slice(0, attentionAfter),
-  attentionStep,
-  ...videoSteps.slice(attentionAfter),
+  ...videoSteps,
   finalStep,
 ];

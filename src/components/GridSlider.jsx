@@ -20,13 +20,9 @@ export default function GridSlider({ question, value, onChange }) {
       )}
 
       <div className="flex justify-between font-mono text-xs text-[var(--color-ink-muted)] mb-5">
-        <span>
-          {min} · {minLabel}
-        </span>
-        {midLabel && <span className="hidden sm:inline">{midLabel}</span>}
-        <span className="text-right">
-          {maxLabel} · +{max}
-        </span>
+        <span>{minLabel} ({min})</span>
+        {midLabel && <span className="hidden sm:inline">{midLabel} (0)</span>}
+        <span className="text-right">{maxLabel} (+{max})</span>
       </div>
 
       <div className="flex flex-col gap-6">

@@ -183,11 +183,19 @@ export default function App() {
       setPhase(PHASES.ERROR);
       return;
     }
-    const rows = buildRows(answers, participantId);
-    const { error } = await supabase.from("responses").insert(rows);
+    let error;
+    try {
+      ({ error } = await supabase.from("responses").insert(buildRows(answers, participantId)));
+    } catch (e) {
+      error = e;
+    }
     if (error) {
       console.error(error);
-      setErrorMsg(error.message || "");
+      const raw = error.message || String(error);
+      const friendly = /fetch|network|type error|load failed/i.test(raw)
+        ? "We could not reach the database. This is usually a short network hiccup, please try again."
+        : raw;
+      setErrorMsg(friendly);
       setPhase(PHASES.ERROR);
     } else {
       setPhase(PHASES.INTEREST);
