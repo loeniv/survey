@@ -26,36 +26,17 @@ export default function VideoStage({ src, label, maxPlays }) {
     setStartedCount((c) => c + 1);
   }
 
-  function goFullscreen() {
-    const el = videoRef.current;
-    if (!el) return;
-    if (el.requestFullscreen) el.requestFullscreen();
-    else if (el.webkitEnterFullscreen) el.webkitEnterFullscreen(); // iOS Safari
-    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-  }
-
   return (
     <div className="rounded-xl border border-[var(--color-line)] bg-black overflow-hidden">
       <div className="flex items-center justify-between gap-3 px-4 py-2 bg-[var(--color-ink)]">
         <span className="font-mono text-xs tracking-wider text-white/70 uppercase truncate">
           {label}
         </span>
-        <div className="flex items-center gap-3 flex-shrink-0">
-          {limited && (
-            <span className="font-mono text-xs text-white/70">
-              Plays {Math.min(startedCount, maxPlays)}/{maxPlays}
-            </span>
-          )}
-          <button
-            type="button"
-            onClick={goFullscreen}
-            disabled={blocked}
-            className="font-mono text-xs text-white/70 hover:text-white disabled:opacity-30 whitespace-nowrap"
-            aria-label="Play in fullscreen"
-          >
-            ⤢<span className="hidden sm:inline"> Fullscreen</span>
-          </button>
-        </div>
+        {limited && (
+          <span className="font-mono text-xs text-white/70 flex-shrink-0">
+            Plays {Math.min(startedCount, maxPlays)}/{maxPlays}
+          </span>
+        )}
       </div>
 
       <div className="relative">

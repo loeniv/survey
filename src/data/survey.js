@@ -31,6 +31,7 @@ export const surveyConfig = {
 
   // PAGE 1: leads into the topic. "{count}" becomes the number of clips.
   intro:
+    "Hello everyone,\n\n" +
     "Robots and automated systems are becoming a much bigger part of everyday " +
     "life, from warehouses and hospitals to shops, stations and pavements. " +
     "They are also learning to act more and more on their own, making " +
@@ -46,12 +47,8 @@ export const surveyConfig = {
     "moving and interacting in a shared space. For each clip, please imagine " +
     "that you are one of the people in the scene and tell us how it made you " +
     "feel. There are no right or wrong answers, only your honest first " +
-    "impression.",
-
-  // Short line shown inside the bordered box on the welcome screen.
-  consent:
-    "By continuing you confirm the statements below. Your answers are stored " +
-    "anonymously and cannot be linked back to you.",
+    "impression.\n\n" +
+    "Best regards,\nLeonie : )",
 
   // PAGE 2: practical notes, shown above the consent checkboxes.
   practical:
@@ -62,8 +59,7 @@ export const surveyConfig = {
     "reason needed.",
 
   // Shown on the very last screen.
-  endText:
-    "Hope you have a great day.\n\nThank you again and kind regards,\nLeonie",
+  endText: "Have a great day : )",
 
   // Final-step controls for withdrawing.
   seriousCheckLabel:
@@ -273,6 +269,8 @@ const INTENSITY_SCALE = {
   maxLabel: "Very much",
 };
 
+// The keyword that names the dimension being asked about is wrapped in **…**
+// and shown in bold.
 const scenarioQuestion = {
   id: "Q020",
   type: "grid",
@@ -282,28 +280,23 @@ const scenarioQuestion = {
     "people in the scene. Drag each slider to wherever feels right for you.",
   ...INTENSITY_SCALE,
   items: [
-    { code: "SQ001", label: "How comfortable did you feel during this interaction?" },
-    { code: "SQ002", label: "How fair did the robot's behaviour seem toward the people in the scene?" },
-    { code: "SQ003", label: "How predictable was the robot's behaviour?" },
-    { code: "SQ004", label: "How safe did you feel during this interaction?" },
-    { code: "SQ005", label: "How much would you trust this robot in this situation?" },
-    { code: "SQ006", label: "How ethically appropriate would you rate the robot's behaviour overall?" },
+    { code: "SQ001", label: "How **comfortable** did you feel during this interaction?" },
+    { code: "SQ002", label: "How **fair** did the robot's behaviour seem toward the people in the scene?" },
+    { code: "SQ003", label: "How **predictable** was the robot's behaviour?" },
+    { code: "SQ004", label: "How **safe** did you feel during this interaction?" },
+    { code: "SQ005", label: "How much would you **trust** this robot in this situation?" },
+    { code: "SQ006", label: "How **ethically appropriate** would you rate the robot's behaviour overall?" },
   ],
 };
 
-// Attention check. It is NOT its own page: it is attached to one scenario
-// (see below) so it blends in as one more slider. Filter out anyone whose
-// "attention_check" answer is not 3.
-const attentionQuestion = {
-  id: "attention_check",
-  type: "slider",
-  prompt:
-    "As a quick check that the sliders are working for you, please set this one to +3.",
-  min: -5,
-  max: 5,
-  step: 1,
-  minLabel: "-5",
-  maxLabel: "+5",
+// Attention check. It is NOT its own page and not styled differently: it is
+// added as one more row on ONE scenario grid (see attentionAt below), so it
+// looks exactly like the other sliders. In the data it lands as
+// question_id "Q020::attention_check" on that scenario's video_id.
+// Filter out anyone whose answer there is not 3.
+const attentionItem = {
+  code: "attention_check",
+  label: "For quality control, please set this slider to +3.",
 };
 
 // Where the video files are served from (a Cloudflare R2 public bucket). The
@@ -360,14 +353,17 @@ const videoSteps = orderedVideos.map((v, i) => ({
   questions: [scenarioQuestion],
 }));
 
-// Hide the attention check inside the scenario about two-thirds of the way in.
+// Hide the attention check inside the scenario about two-thirds of the way in,
+// as an extra slider row on that scenario's grid.
 const attentionAt = Math.min(
   videoSteps.length - 1,
   Math.round((videoSteps.length * 2) / 3)
 );
 videoSteps[attentionAt] = {
   ...videoSteps[attentionAt],
-  questions: [scenarioQuestion, attentionQuestion],
+  questions: [
+    { ...scenarioQuestion, items: [...scenarioQuestion.items, attentionItem] },
+  ],
 };
 
 // ----------------------------------------------------------------------------

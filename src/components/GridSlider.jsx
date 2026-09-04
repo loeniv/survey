@@ -1,3 +1,16 @@
+// Render a label where **text** becomes bold.
+function withEmphasis(text) {
+  return text.split(/\*\*(.+?)\*\*/).map((part, i) =>
+    i % 2 === 1 ? (
+      <strong key={i} className="font-semibold text-[var(--color-ink)]">
+        {part}
+      </strong>
+    ) : (
+      part
+    )
+  );
+}
+
 export default function GridSlider({ question, value, onChange }) {
   // value is an object like { SQ001: 0, SQ002: 3 }
   const state = value ?? {};
@@ -36,7 +49,7 @@ export default function GridSlider({ question, value, onChange }) {
                   htmlFor={`${question.id}-${item.code}`}
                   className="text-sm leading-snug text-[var(--color-ink)]"
                 >
-                  {item.label}
+                  {withEmphasis(item.label)}
                 </label>
                 <span
                   className={`font-mono text-sm tabular-nums ${

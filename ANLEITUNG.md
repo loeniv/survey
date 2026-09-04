@@ -106,13 +106,15 @@ Alles steht in `src/data/survey.js`, in Blöcken (in dieser Reihenfolge):
   Land/Status/Fachrichtung haben `allowOther: true` → „Other"-Option öffnet
   ein Textfeld; der eingetippte Text wird als Antwort gespeichert.
 - **`introStep`**: zwei Slider-Blöcke (Typ `grid`, Skala −5 bis +5).
-- **`attentionQuestion`**: die Aufmerksamkeits-Frage. Sie ist **keine eigene
-  Seite** mehr, sondern hängt als zusätzlicher Slider an **einem** Szenario
-  (ca. 2/3 durch, per `attentionAt` gesteuert). Antwort unter
-  `question_id = "attention_check"` – bei der Auswertung alle rausfiltern,
-  die nicht `3` gesetzt haben.
+- **`attentionItem`**: die Aufmerksamkeits-Frage. Sie ist **keine eigene
+  Seite** und **nicht anders formatiert**, sondern wird als zusätzliche
+  Slider-Zeile an **ein** Szenario-Grid gehängt (ca. 2/3 durch, per
+  `attentionAt`). In den Daten landet sie als
+  `question_id = "Q020::attention_check"` auf der `video_id` dieses Szenarios
+  – bei der Auswertung alle rausfiltern, die dort nicht `3` gesetzt haben.
 - **`scenarioQuestion` + `videos`**: der 6-Item-Slider-Block nach **jedem**
-  Video.
+  Video. Im Fragetext markiert `**wort**` das Schlüsselwort fett
+  (z. B. „How **comfortable** did you feel…").
 - **`finalStep`**: zwei Freitext-Fragen. Darunter das Häkchen „I did not
   answer seriously" – wenn angehakt, wird **nichts** gespeichert.
 

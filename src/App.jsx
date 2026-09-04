@@ -209,12 +209,9 @@ export default function App() {
           {scenarioCount} scenarios
         </p>
         <h1 className="font-display text-3xl font-semibold mb-4">{surveyConfig.title}</h1>
-        <p className="text-[var(--color-ink-muted)] mb-6 leading-relaxed whitespace-pre-line">
+        <p className="text-[var(--color-ink-muted)] mb-8 leading-relaxed whitespace-pre-line">
           {withCount(surveyConfig.intro)}
         </p>
-        <div className="rounded-lg border border-[var(--color-line)] bg-[var(--color-surface)] p-4 mb-8">
-          <p className="text-sm text-[var(--color-ink-muted)] leading-relaxed">{surveyConfig.consent}</p>
-        </div>
         <button
           onClick={() => setPhase(PHASES.SURVEY)}
           className="w-full rounded-lg bg-[var(--color-accent)] text-white font-medium py-3 hover:opacity-90 transition-opacity"
