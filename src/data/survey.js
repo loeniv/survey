@@ -27,7 +27,7 @@
 // ============================================================================
 
 export const surveyConfig = {
-  title: "Ethical Perception Index",
+  title: "Ethical Perception Index for Robot Behavior",
 
   // PAGE 1: leads into the topic.
   intro:
@@ -50,6 +50,8 @@ export const surveyConfig = {
     "moving and interacting in a shared space with one or multiple humans. " +
     "For each clip, please imagine that you are the person in the scene and " +
     "tell us how the situation made you feel.\n\n" +
+    "We recommend taking this survey on a laptop or desktop computer, as the " +
+    "video clips are easier to see clearly on a larger screen.\n\n" +
     "There are no right or wrong answers. We are simply interested in your " +
     "honest first impression.\n\n" +
     "Thank you very much for your participation!\n\n" +
@@ -57,7 +59,7 @@ export const surveyConfig = {
 
   // PAGE 2: practical notes, shown above the consent checkboxes.
   practical:
-    "A few practical notes before you begin. The survey takes about 15 to 20 " +
+    "A few practical notes before you begin. The survey takes about 20 " +
     "minutes. You will watch {count} short clips and answer a handful of quick " +
     "questions after each one. Your answers are anonymous and used only for " +
     "academic research (a master's thesis). You can stop at any time, no " +
