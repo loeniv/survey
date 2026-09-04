@@ -127,9 +127,12 @@ ein kurzer freundlicher Erklärsatz unter der Überschrift.
 **Keine Gedankenstriche** im Teilnehmer-Text: nur Kommas, Punkte oder
 Klammern verwenden.
 
-**Video:** eigener „Fullscreen"-Knopf oben im Player, zusätzlich der native
-Vollbild-Button. Läuft auch auf dem Handy (`playsInline`, keine Zwangs-
-Vollbild-Wiedergabe auf iOS).
+**Amerikanisches Englisch durchgängig** (z. B. „behavior" nicht „behaviour",
+„center" nicht „centre").
+
+**Video:** kein eigener Fullscreen-Knopf (der native Vollbild-Button in der
+Video-Steuerung reicht). Läuft auch auf dem Handy (`playsInline`, keine
+Zwangs-Vollbild-Wiedergabe auf iOS).
 
 **Wichtig zu den Slidern:** Ein Slider zählt erst als beantwortet, wenn er
 bewegt wurde. Unbewegte Slider werden **nicht** gespeichert (nicht als 0).

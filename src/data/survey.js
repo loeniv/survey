@@ -31,7 +31,7 @@ export const surveyConfig = {
 
   // PAGE 1: leads into the topic.
   intro:
-    "Hello everyone,\n\n" +
+    "Hello everyone!\n\n" +
     "Robots and automated systems are becoming an increasingly common part of " +
     "our everyday lives, from vacuum cleaners and service robots in shops to " +
     "automated warehouses, hospital assistance, and even surgical " +
@@ -80,7 +80,7 @@ export const surveyConfig = {
   interestHeading: "Interested in the real-world study?",
   interestText:
     "As a next step we are planning real-world validation experiments with the " +
-    "robot at the research centre in Garching. We would be glad if you would " +
+    "robot at the research center in Garching. We would be glad if you would " +
     "like to take part. Participation is completely voluntary and optional, " +
     "and it has no connection to your answers above. If you are interested, " +
     "use the button below or simply email us.",
@@ -88,7 +88,7 @@ export const surveyConfig = {
   contactSubject: "Interest in Garching Real-World Study",
   contactBody:
     "Hello,\n\nI am interested in taking part in the real-world validation " +
-    "experiments at the research centre in Garching.\n\nBest regards",
+    "experiments at the research center in Garching.\n\nBest regards",
 };
 
 // ----------------------------------------------------------------------------
@@ -311,7 +311,7 @@ const VIDEO_BASE =
   "https://pub-7d29a674a3ed479ba3d497bb7504ae01.r2.dev/00_final_videos";
 
 // One entry per clip. `id` is stored in the database as `video_id`, keep the
-// descriptive names so you can tell the conditions apart when analysing.
+// descriptive names so you can tell the conditions apart when analyzing.
 const videos = [
   { id: "baseline", file: "baseline_LV.mp4" },
   { id: "comfort_plus", file: "comfort_plus_LV.mp4" },
