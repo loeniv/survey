@@ -35,8 +35,8 @@ function choiceValue(value) {
   return value ?? "";
 }
 
-// Whether a question has been answered well enough to move on. Questions that
-// were optional in LimeSurvey (grids, free text) never block the "Next" button.
+// Whether a question has been answered well enough to move on. Only free text
+// is truly optional; every slider must be actively set, even to 0.
 function isAnswered(question, value) {
   switch (question.type) {
     case "consent":
@@ -45,6 +45,10 @@ function isAnswered(question, value) {
     case "single-choice":
     case "multiple-choice":
       return choiceValue(value) !== "";
+    case "grid":
+      return question.items.every(
+        (it) => value != null && value[it.code] !== undefined
+      );
     case "scale":
     case "slider":
       return value !== undefined && value !== null && value !== "";
@@ -151,7 +155,10 @@ export default function App() {
   const withCount = (text) => (text ?? "").replaceAll("{count}", scenarioCount);
 
   function setAnswer(key, value) {
-    setAnswers((prev) => ({ ...prev, [key]: value }));
+    setAnswers((prev) => ({
+      ...prev,
+      [key]: typeof value === "function" ? value(prev[key]) : value,
+    }));
   }
 
   async function handleNext() {

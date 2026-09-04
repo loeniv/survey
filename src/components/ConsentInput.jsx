@@ -3,7 +3,7 @@ export default function ConsentInput({ question, value, onChange }) {
   const state = value ?? {};
 
   function toggle(code) {
-    onChange({ ...state, [code]: !state[code] });
+    onChange((prev) => ({ ...(prev ?? {}), [code]: !(prev ?? {})[code] }));
   }
 
   return (

@@ -17,8 +17,12 @@ export default function GridSlider({ question, value, onChange }) {
   const { min, max, step = 1, minLabel, midLabel, maxLabel } = question;
   const mid = (min + max) / 2;
 
+  const remaining = question.items.filter(
+    (it) => state[it.code] === undefined
+  ).length;
+
   function setItem(code, v) {
-    onChange({ ...state, [code]: v });
+    onChange((prev) => ({ ...(prev ?? {}), [code]: v }));
   }
 
   return (
@@ -40,8 +44,8 @@ export default function GridSlider({ question, value, onChange }) {
 
       <div className="flex flex-col gap-6">
         {question.items.map((item) => {
-          const current = state[item.code] ?? mid;
           const touched = state[item.code] !== undefined;
+          const current = touched ? state[item.code] : mid;
           return (
             <div key={item.code}>
               <div className="flex items-baseline justify-between gap-3 mb-2">
@@ -52,13 +56,13 @@ export default function GridSlider({ question, value, onChange }) {
                   {withEmphasis(item.label)}
                 </label>
                 <span
-                  className={`font-mono text-sm tabular-nums ${
+                  className={`font-mono text-sm tabular-nums flex-shrink-0 ${
                     touched
                       ? "text-[var(--color-ink)] font-medium"
-                      : "text-[var(--color-ink-muted)]"
+                      : "text-[var(--color-signal)]"
                   }`}
                 >
-                  {current > 0 ? `+${current}` : current}
+                  {touched ? (current > 0 ? `+${current}` : current) : "—"}
                 </span>
               </div>
               <input
@@ -69,12 +73,32 @@ export default function GridSlider({ question, value, onChange }) {
                 step={step}
                 value={current}
                 onChange={(e) => setItem(item.code, Number(e.target.value))}
-                className="w-full accent-[var(--color-accent)]"
+                // Touching the slider at all counts as an answer, even if the
+                // value stays at the middle (0). This lets people deliberately
+                // choose 0 by clicking without dragging.
+                onPointerDown={() => { if (!touched) setItem(item.code, current); }}
+                onMouseDown={() => { if (!touched) setItem(item.code, current); }}
+                onTouchStart={() => { if (!touched) setItem(item.code, current); }}
+                onKeyDown={() => { if (!touched) setItem(item.code, current); }}
+                onClick={() => { if (!touched) setItem(item.code, current); }}
+                className={`w-full ${
+                  touched
+                    ? "accent-[var(--color-accent)]"
+                    : "accent-[var(--color-ink-muted)] opacity-50"
+                }`}
               />
             </div>
           );
         })}
       </div>
+
+      {remaining > 0 && (
+        <p className="mt-5 text-xs font-mono text-[var(--color-signal)]">
+          {remaining === question.items.length
+            ? "Please set every slider to continue."
+            : `${remaining} slider${remaining > 1 ? "s" : ""} still to set.`}
+        </p>
+      )}
     </fieldset>
   );
 }

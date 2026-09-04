@@ -29,26 +29,31 @@
 export const surveyConfig = {
   title: "Ethical Perception Index",
 
-  // PAGE 1: leads into the topic. "{count}" becomes the number of clips.
+  // PAGE 1: leads into the topic.
   intro:
     "Hello everyone,\n\n" +
-    "Robots and automated systems are becoming a much bigger part of everyday " +
-    "life, from warehouses and hospitals to shops, stations and pavements. " +
-    "They are also learning to act more and more on their own, making " +
-    "decisions in the moment without a person guiding every step.\n\n" +
-    "When that happens, being technically safe and functional is no longer " +
-    "enough. People also judge a robot by how its behaviour feels: whether it " +
-    "seems fair, trustworthy, predictable and considerate of the people " +
-    "around it. These social and ethical qualities strongly shape whether we " +
-    "accept a robot, yet they are usually studied one factor at a time. There " +
-    "is still no common yardstick for the ethical quality of a robot's " +
-    "behaviour as a whole. This study is a first step towards building one.\n\n" +
-    "In the clips that follow you will see a humanoid robot (Unitree G1) " +
-    "moving and interacting in a shared space. For each clip, please imagine " +
-    "that you are one of the people in the scene and tell us how it made you " +
-    "feel. There are no right or wrong answers, only your honest first " +
-    "impression.\n\n" +
-    "Best regards,\nLeonie : )",
+    "Robots and automated systems are becoming an increasingly common part of " +
+    "our everyday lives, from vacuum cleaners and service robots in shops to " +
+    "automated warehouses, hospital assistance, and even surgical " +
+    "applications. As these technologies become more advanced, they are " +
+    "increasingly able to act autonomously and make decisions in the moment " +
+    "without a person guiding every step.\n\n" +
+    "In these situations, being technically safe and functional is no longer " +
+    "enough. People also judge robots by how their behavior makes them feel, " +
+    "whether they seem fair, trustworthy, predictable, and considerate of the " +
+    "people around them. These social and ethical qualities can strongly " +
+    "influence whether we feel comfortable with and accept a robot. However, " +
+    "they are often studied separately, and there is still no common approach " +
+    "for evaluating a robot's ethical behavior. This study is a first step " +
+    "towards developing such an approach.\n\n" +
+    "In the clips that follow, you will see a humanoid robot (Unitree G1) " +
+    "moving and interacting in a shared space with one or multiple humans. " +
+    "For each clip, please imagine that you are the person in the scene and " +
+    "tell us how the situation made you feel.\n\n" +
+    "There are no right or wrong answers. We are simply interested in your " +
+    "honest first impression.\n\n" +
+    "Thank you very much for your participation!\n\n" +
+    "Best regards, Leonie : )",
 
   // PAGE 2: practical notes, shown above the consent checkboxes.
   practical:
@@ -122,8 +127,7 @@ const demographicStep = {
   title: "A Few Questions About You",
   help:
     "Just some basics about who is taking part. This only helps us describe " +
-    "the group of people in the study. Pick “Prefer not to say” for anything " +
-    "you would rather skip.",
+    "the group of people in the study.",
   questions: [
     {
       id: "Q002",
@@ -220,10 +224,10 @@ const introStep = {
       type: "grid",
       prompt: "Prior Knowledge and Experience",
       help:
-        "This is just to get a sense of how familiar this whole topic already " +
-        "is to you, robots themselves as well as the ethical discussions " +
-        "around them. There are no right answers, so go with your gut. Drag " +
-        "each slider from “Strongly disagree” to “Strongly agree”.",
+        "Here are a few statements to get a sense of how familiar some topics " +
+        "already are to you, robots themselves as well as the ethical " +
+        "discussions around them. Drag each slider from “Strongly disagree” " +
+        "to “Strongly agree”.",
       ...AGREE_SCALE,
       items: [
         { code: "SQ001", label: "I have prior experience working with or studying robots." },
@@ -276,16 +280,16 @@ const scenarioQuestion = {
   type: "grid",
   prompt: "How did you experience this interaction?",
   help:
-    "Think back to the clip you just watched and imagine you were one of the " +
-    "people in the scene. Drag each slider to wherever feels right for you.",
+    "Think back to the clip you just watched and imagine you were the person " +
+    "in the scene. Drag each slider to wherever feels right for you.",
   ...INTENSITY_SCALE,
   items: [
     { code: "SQ001", label: "How **comfortable** did you feel during this interaction?" },
-    { code: "SQ002", label: "How **fair** did the robot's behaviour seem toward the people in the scene?" },
-    { code: "SQ003", label: "How **predictable** was the robot's behaviour?" },
+    { code: "SQ002", label: "How **fair** did the robot's behavior seem toward the people in the scene?" },
+    { code: "SQ003", label: "How **predictable** was the robot's behavior?" },
     { code: "SQ004", label: "How **safe** did you feel during this interaction?" },
     { code: "SQ005", label: "How much would you **trust** this robot in this situation?" },
-    { code: "SQ006", label: "How **ethically appropriate** would you rate the robot's behaviour overall?" },
+    { code: "SQ006", label: "How **ethically appropriate** would you rate the robot's behavior overall?" },
   ],
 };
 
